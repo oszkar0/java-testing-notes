@@ -1,19 +1,36 @@
 package com.oskar;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Test math operations in Calculator class")
 class CalculatorTest {
+    Calculator calculator;
+    @BeforeAll
+    static void setup(){
+        System.out.println("Executing @BeforeAll method");
+    }
+
+    @AfterAll
+    static  void cleanup(){
+        System.out.println("Executing @AfterAll method");
+    }
+
+    @BeforeEach
+    void beforeEachTest(){
+        this.calculator = new Calculator();
+        System.out.println("Executing @BeforeEach method");
+    }
+
+
+
     //naming convention for tests
     //test<System Under Test>_<Condition or State Change>_<Expected result>
     @DisplayName("Test 4/2=2")
     @org.junit.jupiter.api.Test
     void testDivision_WhenFourDividedByTwo_ShouldReturnTwo() {
         //Arrange
-        Calculator calculator = new Calculator();
         int dividend = 4;
         int divisor = 2;
         int expectedResult = 2;
@@ -29,7 +46,6 @@ class CalculatorTest {
     @Test
     void testSubtraction_WhenNineIsSubtractedFromSeven_ShouldReturnMinusTwo() {
         //Arrange //Given
-        Calculator calculator = new Calculator();
         int minuend = 7;
         int subtrahend = 9;
         int expectedResult = -2;
