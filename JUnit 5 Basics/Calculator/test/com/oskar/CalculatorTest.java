@@ -42,6 +42,7 @@ class CalculatorTest {
         assertEquals(2 , result, "Test failed, 4/2 did not produce 2"); //<- message is optional, will be printed if test is failed
     }
 
+    @Disabled("Still needs to be finished")
     @DisplayName("Test 7-9=-2")
     @Test
     void testSubtraction_WhenNineIsSubtractedFromSeven_ShouldReturnMinusTwo() {
@@ -57,5 +58,20 @@ class CalculatorTest {
         assertEquals(expectedResult, result, ()->minuend + "-" + subtrahend + "did not produce " + expectedResult
                 + ", " + result + " was produced"); //<- it is good to put a message as a lambda, as it is computed only
                                                     //in case when test fails, if it is normal message it is always computed
+    }
+
+    @DisplayName("Division by 0")
+    @Test
+    void testIntegerDivision_WhenDividendIsDividedByZero_ShouldThrowArithmeticException(){
+        int dividend = 4;
+        int divisor = 0;
+        String expectedExceptionMessage = "/ by zero";
+
+        ArithmeticException e = assertThrows(ArithmeticException.class,
+                ()-> {
+                    calculator.division(dividend, divisor);
+                }, "Division by zero should have thrown an Arithmetic exception");
+
+        assertEquals(expectedExceptionMessage, e.getMessage(), "Unexpected exception message");
     }
 }
