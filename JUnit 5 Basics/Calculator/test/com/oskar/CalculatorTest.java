@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Order(2)
 @DisplayName("Test math operations in Calculator class")
 class CalculatorTest {
     Calculator calculator;

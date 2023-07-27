@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+@Order(1) //order of class execution
 //@TestMethodOrder(MethodOrderer.Random.class) <- every run method execution order is random
 //@TestMethodOrder(MethodOrderer.MethodName.class) <- every run is the same
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
