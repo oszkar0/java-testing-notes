@@ -5,9 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CalculatorTest {
-
+    //naming convention for tests
+    //test<System Under Test>_<Condition or State Change>_<Expected result>
     @org.junit.jupiter.api.Test
-    void division() {
+    void testDivision_WhenFourDividedByTwo_ShouldReturnTwo() {
         Calculator calculator = new Calculator();
         int result = calculator.division(4, 2);
 
@@ -15,7 +16,7 @@ class CalculatorTest {
     }
 
     @Test
-    void subtraction() {
+    void testSubtraction_WhenNineIsSubtractedFromSeven_ShouldReturnMinusTwo() {
         Calculator calculator = new Calculator();
 
         int minuend = 7;
