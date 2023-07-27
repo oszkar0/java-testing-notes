@@ -1,12 +1,15 @@
 package com.oskar;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisplayName("Test math operations in Calculator class")
 class CalculatorTest {
     //naming convention for tests
     //test<System Under Test>_<Condition or State Change>_<Expected result>
+    @DisplayName("Test 4/2=2")
     @org.junit.jupiter.api.Test
     void testDivision_WhenFourDividedByTwo_ShouldReturnTwo() {
         Calculator calculator = new Calculator();
@@ -15,6 +18,7 @@ class CalculatorTest {
         assertEquals(2 , result, "Test failed, 4/2 did not produce 2"); //<- message is optional, will be printed if test is failed
     }
 
+    @DisplayName("Test 7-9=-2")
     @Test
     void testSubtraction_WhenNineIsSubtractedFromSeven_ShouldReturnMinusTwo() {
         Calculator calculator = new Calculator();
