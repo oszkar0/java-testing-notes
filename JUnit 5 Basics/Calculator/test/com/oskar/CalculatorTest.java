@@ -1,6 +1,10 @@
 package com.oskar;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.*;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -73,5 +77,46 @@ class CalculatorTest {
                 }, "Division by zero should have thrown an Arithmetic exception");
 
         assertEquals(expectedExceptionMessage, e.getMessage(), "Unexpected exception message");
+    }
+
+    @DisplayName("Parametrized subtraction test")
+    @ParameterizedTest
+    @MethodSource("subtractionInputParameters") //<- name of method which provides input parameters
+//    @CsvSource( { <- we dont neeed above line and the function
+//                  "33, 1, 32",
+//                  "42, 5, 37"
+//                 } )
+//    @CsvSource({
+//            "apple, orange",
+//            "apple, '' <- empty",
+//            "apple, <- null"
+//    })
+//    @CsvFileSource(resources = "/integerDivison.csv")
+//    we have to create package in test directory and mark as test resources
+//    in csv files parameters should be like 44,4,40 newline 50,1,49
+    void subtractionParametrized(int minuend, int subtrahend, int expectedResult){
+        int result = calculator.subtraction(minuend, subtrahend);
+
+        //Assert //Then
+        assertEquals(expectedResult, result, ()->minuend + "-" + subtrahend + "did not produce " + expectedResult
+                + ", " + result + " was produced"); //<- it is good to put a message as a lambda, as it is computed only
+
+    }
+
+
+    private static Stream<Arguments> subtractionInputParameters(){
+        return Stream.of(
+                Arguments.of(33, 1, 32),
+                Arguments.of(54, 1, 53),
+                Arguments.of(24, 25, -1)
+        );
+    }
+
+
+    @ParameterizedTest
+    @ValueSource(strings = {"John", "Oskar", "Kuba"})
+    void valueSourceDemonstration(String firstName){
+        System.out.println(firstName);
+        assertNotNull(firstName);
     }
 }
