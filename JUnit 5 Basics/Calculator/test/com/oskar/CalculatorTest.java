@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) // <- creates one instance of class for all test methods instead of deafult new class for every method
 @Order(2)
 @DisplayName("Test math operations in Calculator class")
 class CalculatorTest {
