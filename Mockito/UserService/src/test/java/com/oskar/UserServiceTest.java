@@ -56,6 +56,7 @@ public class UserServiceTest {
             assertEquals(lastName, user.getLastName(), "User's last name is incorrect");
             assertEquals(email, user.getEmail(), "User's email is incorrect");
             assertNotNull(user.getId(), "User id is missing");
+            Mockito.verify(usersRepository, Mockito.times(1)).save(Mockito.any(User.class));
         }
 
         @DisplayName("Empty first name causes correct exception")
