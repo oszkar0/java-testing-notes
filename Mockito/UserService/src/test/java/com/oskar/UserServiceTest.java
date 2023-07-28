@@ -5,6 +5,7 @@ import com.oskar.data.UsersRepositoryImpl;
 import com.oskar.model.User;
 import com.oskar.service.UserService;
 
+import com.oskar.service.UserServiceException;
 import com.oskar.service.UserServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +17,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -92,4 +92,22 @@ public class UserServiceTest {
             assertEquals(expectedExceptionMessage,thrown.getMessage(),
                     "Exception error message is not correct");
         }
+
+        @Test
+        void testCreateUser_whenSaveMethodThrowsException_thenThrowsUserServiceException(){
+            //Arrange
+            Mockito.when(usersRepository.save(Mockito.any(User.class))).thenThrow(RuntimeException.class);
+
+            //Act & Assert
+            assertThrows(UserServiceException.class, ()->{
+                userService.createUser(firstName, lastName, email, password, repeatPassword);
+            }, "Should have thrown UserServiceException");
+        }
+
+        //for void return method
+        //we use
+        // doThrow().when()
+        // doReturn().when()
+        // doNothing().when()
+        // doCallRealMethod().when()
 }
