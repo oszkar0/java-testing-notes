@@ -1,5 +1,6 @@
 package com.oskar;
 
+import com.oskar.data.UsersRepository;
 import com.oskar.data.UsersRepositoryImpl;
 import com.oskar.model.User;
 import com.oskar.service.UserService;
@@ -9,13 +10,21 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
-
-        UserService userService;
+        @InjectMocks // <- mockito will create userService and inject mocks
+        UserServiceImpl userService;
+        @Mock //<- mockito will create mock object
+        UsersRepository usersRepository;
         String firstName;
         String lastName;
         String email;
@@ -24,7 +33,6 @@ public class UserServiceTest {
 
         @BeforeEach
         void init() {
-            userService = new UserServiceImpl();
             firstName = "Sergey";
             lastName  = "Kargopolov";
             email = "test@test.com";
@@ -35,6 +43,10 @@ public class UserServiceTest {
         @DisplayName("User object created")
         @Test
         void testCreateUser_whenUserDetailsProvided_returnsUserObject() {
+            //Arrange
+            Mockito.when(usersRepository.save(Mockito.any(User.class))).thenReturn(true);
+            //we tell the behaviour of mock object
+
             // Act
             User user = userService.createUser(firstName, lastName, email, password, repeatPassword);
 
