@@ -4,6 +4,7 @@ import com.oskar.model.User;
 import com.oskar.service.UserService;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 //TDD - We start with writing the test, everytime test doesnt compile, we have to stop
@@ -24,5 +25,22 @@ public class UserServiceTest {
 
         //Assert
         assertNotNull(user, "The createUser() should not have returned null");
+    }
+
+    @Test
+    void testCreateUser_whenUserDetailsProvided_returnsUserObjectContainsSameFirstName(){
+        //Arrange
+        UserService userService = new UserServiceImpl();
+        String firstName = "Oskar";
+        String lastName = "Szysiak";
+        String email = "test@test.com";
+        String password = "12345678";
+        String repeatedPassword = "12345678";
+
+        //Act
+        User user = userService.createUser(firstName, lastName, email, password, repeatedPassword);
+
+        //Assert
+        assertEquals(firstName, user.getFirstName(), "User's first name is incorrect");
     }
 }
