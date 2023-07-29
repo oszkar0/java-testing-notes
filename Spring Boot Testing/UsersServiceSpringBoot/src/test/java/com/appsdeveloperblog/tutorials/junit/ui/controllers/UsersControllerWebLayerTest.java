@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -75,5 +76,34 @@ public class UsersControllerWebLayerTest {
                 createdUser.getLastName(), "The returned users last name is most likely incorrect");
 
         Assertions.assertFalse(createdUser.getUserId().isEmpty(), "User id should not be empty");
+    }
+
+
+    @Test
+    @DisplayName("First name is not empty")
+    void testCreateUser_whenFirstNameIsNotProvided_return400StatusCode() throws Exception{
+        //Arrange
+        UserDetailsRequestModel userDetailsRequestModel = new UserDetailsRequestModel();
+        userDetailsRequestModel.setFirstName("");
+        userDetailsRequestModel.setLastName("Szysiak");
+        userDetailsRequestModel.setEmail("email@email.com");
+        userDetailsRequestModel.setPassword("123456789");
+        userDetailsRequestModel.setRepeatPassword("123456789");
+
+        UserDto userDto = new ModelMapper().map(userDetailsRequestModel, UserDto.class);
+        userDto.setUserId(UUID.randomUUID().toString());
+        when(usersService.createUser(any(UserDto.class))).thenReturn(userDto);
+
+        RequestBuilder requestBuilder =  MockMvcRequestBuilders.post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(userDetailsRequestModel));
+
+        //Act
+        MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
+
+        //Assert
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), mvcResult.getResponse().getStatus(),
+                "Incorrect HTTP Status Code returned");
     }
 }
