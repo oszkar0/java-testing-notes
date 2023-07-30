@@ -1,11 +1,10 @@
 package com.appsdeveloperblog.tutorials.junit.ui.controllers;
 
+import com.appsdeveloperblog.tutorials.junit.security.SecurityConstants;
 import com.appsdeveloperblog.tutorials.junit.ui.response.UserRest;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -23,6 +22,7 @@ import java.util.List;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, //tells spring that we will be testing all layers
 properties = "server.port=8081")
 //or with @TestPropertySource(locations = "/app-test.properties") we can define another source
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UsersControllerIntegrationTest {
 
     @Autowired
@@ -30,6 +30,7 @@ public class UsersControllerIntegrationTest {
 
     @Test
     @DisplayName("User can be created")
+    @Order(1)
     void testCreateUser_whenValidDetailsProvided_returnUserDetails() throws JSONException {
         //Arrange
         JSONObject userDetailsRequestJson = new JSONObject();
@@ -61,7 +62,8 @@ public class UsersControllerIntegrationTest {
 
     @Test
     @DisplayName("GET /users requires JWT")
-    void testGetUsers_whenMissingJWT_return405(){
+    @Order(2)
+    void testGetUsers_whenMissingJWT_return403(){
         //Arrange
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
@@ -78,6 +80,28 @@ public class UsersControllerIntegrationTest {
         //Assert
         Assertions.assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode(), "Http Status code 403 " +
                 "Forbidden should have been returned");
+
+
+    }
+
+    @Test
+    @DisplayName("/login works")
+    @Order(3)
+    void testUserLogin_whenValidCredentialsProvided_returnsJWTinAuthorizationHeader() throws JSONException {
+        //Arrange
+        JSONObject loginCredentials = new JSONObject();
+        loginCredentials.put("email", "oskszy@kkk.com");
+        loginCredentials.put("password", "123456789");
+
+        HttpEntity<String> request = new HttpEntity<>(loginCredentials.toString());
+
+        //Act
+        ResponseEntity response = testRestTemplate.postForEntity("/users/login", request, null);
+
+        //Assert
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertNotNull(response.getHeaders().getValuesAsList(SecurityConstants.HEADER_STRING).get(0));
+        Assertions.assertNotNull(response.getHeaders().getValuesAsList("UserID").get(0));
 
 
     }
