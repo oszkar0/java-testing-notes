@@ -23,11 +23,13 @@ import java.util.List;
 properties = "server.port=8081")
 //or with @TestPropertySource(locations = "/app-test.properties") we can define another source
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UsersControllerIntegrationTest {
 
     @Autowired
     private TestRestTemplate testRestTemplate; //client which will allow us to send http request
 
+    private String authorizationToken;
     @Test
     @DisplayName("User can be created")
     @Order(1)
@@ -98,11 +100,34 @@ public class UsersControllerIntegrationTest {
         //Act
         ResponseEntity response = testRestTemplate.postForEntity("/users/login", request, null);
 
+        authorizationToken = response.getHeaders().getValuesAsList(SecurityConstants.HEADER_STRING).get(0);
         //Assert
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertNotNull(response.getHeaders().getValuesAsList(SecurityConstants.HEADER_STRING).get(0));
+        Assertions.assertNotNull(authorizationToken);
         Assertions.assertNotNull(response.getHeaders().getValuesAsList("UserID").get(0));
 
 
+    }
+
+    @Test
+    @DisplayName("GET /users works")
+    void testGetUsers_whenValidJWTProvided_returnsUsers(){
+        //Arrange
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        headers.setBearerAuth(authorizationToken);
+
+        HttpEntity request = new HttpEntity<>(headers);
+
+        //Act
+        ResponseEntity<List<UserRest>> response = testRestTemplate.exchange("/users",
+                HttpMethod.GET,
+                request,
+                new ParameterizedTypeReference<List<UserRest>>() {
+                });
+
+        //Assert
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertTrue(response.getBody().size() == 1);
     }
 }
