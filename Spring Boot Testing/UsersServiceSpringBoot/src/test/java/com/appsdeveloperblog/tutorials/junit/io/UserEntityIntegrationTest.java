@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import javax.persistence.PersistenceException;
 import java.util.UUID;
 
 @DataJpaTest
@@ -27,5 +28,18 @@ public class UserEntityIntegrationTest {
         Assertions.assertTrue(user.getId() > -1);
         Assertions.assertEquals(user.getUserId(), storedUser.getUserId());
         //...
+    }
+
+    @Test
+    void testUserEntity_whenFirstNameIsTooLong_shouldThrowException(){
+        UserEntity user = new UserEntity();
+        user.setUserId(UUID.randomUUID().toString());
+        user.setFirstName("oooosssskkkkoooosssskkkkoooosssskkkkoooosssskkkkoooosssskkkk");
+        user.setLastName("Szysiak");
+        user.setEmail("oskszy@kkk.com");
+        user.setEncryptedPassword("123456789");
+
+        Assertions.assertThrows(PersistenceException.class, () -> {
+            testEntityManager.persistAndFlush(user);});
     }
 }
